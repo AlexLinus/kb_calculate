@@ -1,0 +1,57 @@
+
+#main-wrapper {
+    margin-top: 50px;
+}
+
+#model-price-block {
+}
+
+#price-table {
+    margin: 20px auto 0;
+}
+
+#price-table input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+    display: block;
+}
+
+.title-h2 {
+    font-size: 25px;
+}
+
+/* Форма выбора автомобиля */
+#chose-car-form {
+    margin: 20px auto 0;
+}
+
+#chose-car-form input, #chose-car-form select {
+    width: 100%;
+    border: 1px solid #bcbcbc;
+
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 5px 10px;
+}
+
+#discount-form input, #parts-form input {
+    width: 40%;
+    border: 1px solid #bcbcbc;
+    font-weight: bold;
+    padding: 5px 5px 5px;
+}
+
+#price-table input[type="number"] {
+    border: 1px solid #bcbcbc;
+
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+#model-price-block .car-notes {
+    padding: 10px;
+    background: #ffdcdc;
+    border: 1px solid #b7b7b7;
+}

@@ -1,0 +1,134 @@
+        <h2 class="title-h2">Услуги и цены</h2>
+        <div class="row">
+            <div class="col-12">
+                <table class="table" id="totals-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Итоговая стоимость:</th>
+                            <th scope="col">Скидка %:</th>
+                            <th scope="col">Сумма со скидкой:</th>
+                            <th scope="col">Цена запчастей:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th><span id="itog"></span> руб.</th>
+                            <th><form id="discount-form"><input type="number" value="0" id="discount"/></form></th>
+                            <th><span id="withdiscount"></span> руб.</th>
+                            <th><form id="parts-form"><input type="number" value="0" id="plusparts"/></form><br/>Итог с запчастями: <span id="itog-with-parts"></span> руб.</th>
+                         </tr>
+                    </tbody>
+                </table>
+                <div class="car-notes">
+                    <h4>Заметки:</h4>
+                    <p>{{ model.notes }}</p>
+                </div>
+            </div>
+        </div>
+
+        <table class="table" id="price-table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Услуга</th>
+              <th scope="col">Цена</th>
+              <th scope="col">Выбрать</th>
+                <th scope="col">Количество</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for service in model.model_services.all %}
+                <tr>
+                  <th scope="row">{{ service.service_title }}</th>
+                  <td>{{ service.service_price }} руб.</td>
+                    <td><form><input type="checkbox" value="{{ service.service_title }}" class="service-choice" data-price="{{ service.service_price }}" data-service-id="{{ service.id }}" /></form></td>
+                    <td><form><input type="number" class="quantity" value="1" data-service-id="{{ service.id }}" data-price="{{ service.service_price }}"></form></td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+  <script>
+    $(document).ready(function (e) {
+        let services = {};
+        let total_price = 0;
+        function calculate_parts() {
+            let price_parts = parseInt($('#plusparts').val());
+            if ($('#withdiscount').text()) {
+                let price_with_discount = parseInt($('#withdiscount').text());
+                $('#itog-with-parts').html(price_parts+price_with_discount);
+            }
+            else {
+                let total_services = parseInt($('#itog').text());
+                $('#itog-with-parts').html(price_parts+total_services);
+            }
+
+        }
+
+        function calculate_discount() {
+            let discount_val = parseInt($('#discount').val());
+            if (discount_val > 0){
+                let total_without = parseInt($('#itog').text());
+                let total_summa_with_discount = total_without - ((total_without*discount_val)/100);
+                console.log(total_summa_with_discount);
+                $('#withdiscount').html(total_summa_with_discount);
+                calculate_parts();
+            }
+
+        }
+
+
+        $('#plusparts').on('change', function(){
+            calculate_parts();
+        })
+
+        $('#discount').on('change', function() {
+            calculate_discount();
+        })
+
+        $('.quantity').on('change', function(e) {
+            let quantity = $(this).val();
+            let item_qty_id = $(this).attr('data-service-id');
+            let item_qty_price = $(this).attr('data-price');
+            let item_total_qty_price = parseInt(item_qty_price) * parseInt(quantity);
+
+            // Здесь мы проверяем, равно ли 0. Если не равно нулю или меньше 0, то ничего не происходит.
+            if ( !(parseInt(quantity) <= 0)) {
+                //Проверяем таким образом нажат ли чекбокс (выбрана ли услуга), точнее проверяем на наличие в списке services данной услуги.
+                if(item_qty_id in services) {
+                    services[item_qty_id] = item_total_qty_price;
+                    total_price = 0
+                    for (item in services){
+                        console.log(services[item]);
+                        // Здесь производим подсчет всех цен и добавляем их в Total Price
+                        total_price += parseInt(services[item])
+                    }
+                    // Записывааем в div #itog итоговую стоимость.
+                    $('#itog').html(total_price);
+                    calculate_discount();
+                    calculate_parts();
+                }
+            }
+        });
+        $(".service-choice").on('change', function(e) {
+            if(this.checked) {
+                // Здесь мы добавляем пару ключ-значение в services, где ключ будет id из data-service-id
+                services[$(this).attr('data-service-id')] = $(this).attr('data-price');
+            }
+            else {
+                // Если чекбокс не отмечен, то происходит его удаление из словаря по ключу id.
+                delete services[$(this).attr('data-service-id')]
+                console.log(services);
+            }
+            // Здесь мы обнуляем totalPrice, иначе он будет каждый раз прибавлять, к текущей сумме. И будет расти в геометрической прогрессии.
+            total_price = 0
+            for (item in services){
+                console.log(services[item]);
+                // Здесь производим подсчет всех цен и добавляем их в Total Price
+                total_price += parseInt(services[item])
+            }
+            // Записывааем в div #itog итоговую стоимость.
+            $('#itog').html(total_price);
+            calculate_discount();
+            calculate_parts();
+        });
+    })
+  </script>

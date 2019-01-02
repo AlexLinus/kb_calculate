@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col-3">
+        <h2 class="title-h2">Выбрать модель</h2>
+        <form action="/" id="chose-car-form">
+            {% csrf_token %}
+            {{ form.model_title }}
+        </form>
+
+    </div>
+    <div class="col-9" id="model-price-block">
+        {% include 'price-block.html' %}
+    </div>
+{% endblock %}
