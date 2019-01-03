@@ -6,6 +6,16 @@
         <form action="/" id="chose-car-form">
             {% csrf_token %}
             {{ form.model_title }}
+            <script> <!-- https://selectize.github.io/selectize.js/ - использовал этот autocomplete для select поля -->
+				$('#id_model_title').selectize({
+					create: true,
+					sortField: {
+						field: 'text',
+						direction: 'asc'
+					},
+					dropdownParent: 'body'
+				});
+            </script>
         </form>
 
     </div>
